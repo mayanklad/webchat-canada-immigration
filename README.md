@@ -1,3 +1,7 @@
+# webchat-canada-immigration
+
+This repository is a submodule for the [chatbot-canada-immigration](https://github.com/mayanklad/chatbot-canada-immigration) repository. This module contains the source code for the chatbot web UI.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
