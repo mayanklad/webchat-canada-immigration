@@ -9,35 +9,43 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
 
-  const handleSendMessage = () => {
-    setMessages(messages => [...messages, {from: 'user', type: 'text', value: input}]);
-    
-    try {
-      axios.post(URL, {
-        sender: 'user1',
-        message: input
-      })
-      .then((response) => {
-        console.log('User utter:', input);
-
-        for(let i=0; i < response.data.length; i++){
-          if (response.data[i]['text']) {
-            setMessages(messages => [...messages, {from: 'bot', type: 'text', value: response.data[i]['text']}]);
-          }
-          else if (response.data[i]['image']) {
-            setMessages(messages => [...messages, {from: 'bot', type: 'imageURL', value: response.data[i]['image']}]);
-          }
-        }
-
-        console.log('Bot utter:', response.data);
-
-        // Clear the input field
-        setInput('');
-      });
-    } catch (error) {
-      console.error('Error sending message:', error);
+  const handleKeyDownInput = (event) => {
+    if (event.key === 'Enter' && input !== '') {
+      const sendBtn = document.getElementById('btn-send');
+      sendBtn.click();
     }
+  };
 
+  const handleSendMessage = () => {
+    if (input !== '') {
+      setMessages(messages => [...messages, {from: 'user', type: 'text', value: input}]);
+    
+      try {
+        axios.post(URL, {
+          sender: 'user1',
+          message: input
+        })
+        .then((response) => {
+          console.log('User utter:', input);
+
+          for(let i=0; i < response.data.length; i++){
+            if (response.data[i]['text']) {
+              setMessages(messages => [...messages, {from: 'bot', type: 'text', value: response.data[i]['text']}]);
+            }
+            else if (response.data[i]['image']) {
+              setMessages(messages => [...messages, {from: 'bot', type: 'imageURL', value: response.data[i]['image']}]);
+            }
+          }
+
+          console.log('Bot utter:', response.data);
+
+          // Clear the input field
+          setInput('');
+        });
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
   };
   
   return (
@@ -58,7 +66,6 @@ function Chat() {
                 </div>
               </div>
             </div>
-            
             <div
               className='flex flex-row items-center h-16 rounded-xl bg-white w-full px-4'
             >
@@ -67,33 +74,39 @@ function Chat() {
                   <input
                     type='text'
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={handleKeyDownInput}
                     placeholder='Type your message...'
-                    className='flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10'
+                    className='flex w-full border rounded-xl focus:outline-sky-500 focus:bg-transparent hover:bg-gray-100 pl-4 h-10'
                   />
                 </div>
               </div>
               <div className='ml-4'>
                 <button
-                  className='flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0'
+                  id='btn-send'
+                  className={`btn-send h-10 px-4 flex items-center justify-center overflow-hidden text-white font-medium rounded-full from-cyan-400 to-blue-400 bg-gradient-to-r ${input === '' ? 'opacity-50 cursor-not-allowed' : 'hover:from-cyan-500 hover:to-blue-500'}`}
                   onClick={handleSendMessage}
                 >
-                  <span>Send</span>
-                  <span className='ml-2'>
-                    <svg
-                      className='w-4 h-4 transform rotate-45 -mt-px'
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8'
-                      ></path>
-                    </svg>
+                  <span
+                    className='flex items-center justify-center h-full'
+                  >
+                    <span>Send</span>
+                    <span className='ml-2 relative'>
+                      <svg
+                        className='w-4 h-4 transform rotate-45 -mt-px'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8'
+                        ></path>
+                      </svg>
+                    </span>
                   </span>
                 </button>
               </div>
@@ -101,7 +114,6 @@ function Chat() {
           </div>
         </div>
       </div>
-      
     </div>
   );
 }
