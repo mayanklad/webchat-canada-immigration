@@ -11,16 +11,23 @@ export default function ChatBubble(props) {
         >
           <img alt='chat icon' src={props.from==='bot' ? BotImg : UserImg} />
         </div>
-        <div
-          className={`relative text-sm py-2 px-4 shadow rounded-xl ${props.from==='bot' ? 'ml-3 bg-white' : 'mr-3 bg-indigo-100'}`}
-        >
-          {props.type==='text' ? (<div>{props.value}</div>) : (<img alt='' src={props.value}></img>)}
-          {/* <div
-            className="absolute text-xs bottom-0 right-0 -mb-5 mr-2 text-gray-500"
+        <div>
+          <div
+            className={`relative text-sm py-2 px-4 shadow rounded-xl ${props.from==='bot' ? 'ml-3 bg-white' : 'mr-3 bg-indigo-100'}`}
           >
-            Seen
-          </div> */}
+            {props.type==='text' ? (<div>{props.value}</div>) : (<img alt='' src={props.value}></img>)}
+            
+          </div>
+          {(props.from==='bot' && props.confidence && props.intent) ?
+            (<div
+              className="relative text-xs tracking-wider leading-loose py-2 px-4 text-gray-500"
+            >
+              Intent: <b>{props.intent}</b>
+              <br/>
+              Confidence: <b>{Math.trunc(props.confidence*10000)/10000}</b>
+            </div>) : ''}
         </div>
+        
       </div>
     </div>
   );

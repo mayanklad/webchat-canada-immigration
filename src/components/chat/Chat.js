@@ -30,10 +30,22 @@ function Chat() {
 
           for(let i=0; i < response.data.length; i++){
             if (response.data[i]['text']) {
-              setMessages(messages => [...messages, {from: 'bot', type: 'text', value: response.data[i]['text']}]);
+              if (i+1 < response.data.length && response.data[i+1]['custom']['response_selector']['default']['response']) {
+                let metric = response.data[i+1]['custom']['response_selector']['default']['response'];
+                setMessages(messages => [...messages, {from: 'bot', type: 'text', value: response.data[i]['text'], confidence: metric['confidence'], intent: metric['intent_response_key']}]);
+              }
+              else {
+                setMessages(messages => [...messages, {from: 'bot', type: 'text', value: response.data[i]['text']}]);
+              }
             }
             else if (response.data[i]['image']) {
-              setMessages(messages => [...messages, {from: 'bot', type: 'imageURL', value: response.data[i]['image']}]);
+              if (i+1 < response.data.length && response.data[i+1]['custom']['response_selector']['default']['response']) {
+                let metric = response.data[i+1]['custom']['response_selector']['default']['response'];
+                setMessages(messages => [...messages, {from: 'bot', type: 'imageURL', value: response.data[i]['image'], confidence: metric['confidence'], intent: metric['intent_response_key']}]);
+              }
+              else {
+                setMessages(messages => [...messages, {from: 'bot', type: 'imageURL', value: response.data[i]['image']}]);
+              }
             }
           }
 
@@ -55,12 +67,12 @@ function Chat() {
           <div
             className='flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4'
           >
-            <div className='flex flex-col h-full overflow-x-auto mb-4'>
+            <div className='flex flex-col h-full overflow-y-auto mb-4'>
               <div className='flex flex-col h-full'>
                 <div id='chat-window' className='chat-window grid grid-cols-12 gap-y-2'>
                   {messages.map((message, index) => {
                     return (
-                      <ChatBubble key={index} from={message.from} type={message.type} value={message.value}></ChatBubble>
+                      <ChatBubble key={index} from={message.from} type={message.type} value={message.value} confidence={message.confidence} intent={message.intent}></ChatBubble>
                     );
                   })}
                 </div>
